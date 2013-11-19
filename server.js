@@ -50,15 +50,23 @@ app.get('/', function(req, res){
 
 
 var url = require("url");
+var js2xmlparser = require("js2xmlparser");
 
 app.get('/export', function(req, res){
 	console.log(new Date(), req.connection.remoteAddress)
   
 	var pathname = url.parse(req.url, true).query["domain"];
+	var format = url.parse(req.url, true).query["format"];
 
 	completecdnfinder(pathname, function(err, results){
 		if(results){
-		  res.send(results);
+			results["domain"] = pathname;
+			if(format == 'xml' || format == 'XML'){
+		  		console.log(js2xmlparser("resources", results));
+				res.send(js2xmlparser("resources", results));
+			} else {
+				res.send(results);
+			}
 		} else {
 		  res.send({"status": "FAILURE"});
 		}
@@ -70,20 +78,27 @@ app.get('/links', function(req, res){
 	console.log(new Date(), req.connection.remoteAddress)
   
 	var pathname = url.parse(req.url, true).query["domain"];
+	var format = url.parse(req.url, true).query["format"];
 
 	completecdnfinder(pathname, function(err, results){
 		if(results){
-			for(var i = 0, l = results.everything.length; i < l; i++) {
-				delete results.everything[i].headers;
+			results["domain"] = pathname;
+			for(var i = 0, l = results.resource.length; i < l; i++) {
+				delete results.resource[i].headers;
 			}
-			
-			res.send(results);
+			if(format == 'xml' || format == 'XML'){
+		  		console.log(js2xmlparser("resources", results));
+				res.send(js2xmlparser("resources", results));
+			} else {
+				res.send(results);
+			}
 		} else {
 			res.send({"status": "FAILURE"});
 		}
 	});
 
 });
+
 
 
 

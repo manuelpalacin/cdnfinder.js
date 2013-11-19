@@ -21,13 +21,13 @@ function showresult(result){
 		data.addColumn('number', 'count');
 		data.addColumn('number', 'bytes');
 		data.addColumn('boolean', 'isbase');
-		data.addRows(result.everything.length);
-		for(i=0;i<result.everything.length;i++){
-			data.setCell(i, 0, result.everything[i].hostname);
-			data.setCell(i, 1, result.everything[i].cdn);
-			data.setCell(i, 2, result.everything[i].count);
-			data.setCell(i, 3, result.everything[i].bytes);
-			data.setCell(i, 4, result.everything[i].isbase);
+		data.addRows(result.resource.length);
+		for(i=0;i<result.resource.length;i++){
+			data.setCell(i, 0, result.resource[i].hostname);
+			data.setCell(i, 1, result.resource[i].cdn);
+			data.setCell(i, 2, result.resource[i].count);
+			data.setCell(i, 3, result.resource[i].bytes);
+			data.setCell(i, 4, result.resource[i].isbase);
 		}
 		var table = new google.visualization.Table(document.getElementById('datatable'));
 		table.draw(data, {showRowNumber: true});
@@ -59,7 +59,7 @@ function runfinder(){
 </script>
 	</head>
 	<body>
-		Enter url here... with http and everything <input id="url" type="text" name="url" />
+		Enter url here... with http and resource <input id="url" type="text" name="url" />
   		<input type="submit" value="Submit" onclick="javascript:runfinder()"/> <br />
   		<span id="loading" style="display:none">LOADING</span><br />
   		<span id="finderresult"></span><br />
