@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<title>New CDNfinder Bulk Request</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	</head>
+	<body>
+	
+		<script language="javascript">
+			function add() {
+				//Create an input type dynamically.
+				var br = document.createElement("br");
+				var element = document.createElement("input");
+			 
+				//Assign different attributes to the element.
+				element.setAttribute("id", "domain");
+				element.setAttribute("type", "text");
+				element.setAttribute("name", "domain");
+
+				var extra = document.getElementById("extra");
+				
+				//Append the element in page (in span).
+				extra.appendChild(element);
+				extra.appendChild(br);
+			}
+		</script>
+		<form action="/bulk" method="post">
+			Enter url here... with http and url </br>
+			<input id="domain" type="text" name="domain" /> <a href="javascript:add()">add other domain</a></br>
+			<span id="extra"></span>
+			
+			<select id="format" name="format">
+			  <option value="xml">XML</option>
+			  <option value="json">JSON</option>
+			</select> </br>
+
+			<input type="submit" value="Submit" />
+		</form>
+		
+		</br>
+		<form action="/bulkUpload" method="post" enctype="multipart/form-data">
+			Or you can upload a file with one domain per line. </br>
+			<input type="file" name="file" /> </br>
+			
+			<select id="format" name="format">
+			  <option value="xml">XML</option>
+			  <option value="json">JSON</option>
+			</select> </br>
+
+			<input type="submit" value="Submit" />
+		<form>	
+	</body>
+</html>

@@ -1,0 +1,17 @@
+npm install express
+npm install step
+npm install native-dns
+npm install url
+npm install async
+npm install js2xmlparser
+npm install formidable@latest
+
+
+
+//Install Phantom
+sudo apt-get update
+sudo apt-get install build-essential chrpath git-core libssl-dev libfontconfig1-dev
+git clone git://github.com/ariya/phantomjs.git
+cd phantomjs
+git checkout 1.9
+./build.sh

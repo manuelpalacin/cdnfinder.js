@@ -1,0 +1,11 @@
+http://google.com
+http://facebook.com
+http://youtube.com
+http://yahoo.com
+http://baidu.com
+http://wikipedia.org
+http://qq.com
+http://linkedin.com
+http://live.com
+http://twitter.com
+http://amazon.com
