@@ -254,7 +254,7 @@ app.post('/bulk', function(req, res){
 
 
 
-var timeOut = 600000; //10 min
+var timeOut = 1800000; //30 min
 var parallelProc = 5; 
 var port = 80;
 console.log('CDNFinder listening in http://yourdomain:'+port);
