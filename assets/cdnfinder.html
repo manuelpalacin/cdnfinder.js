@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<title>New CDNfinder</title>
+
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css" />	
+		<script type='text/javascript' src='https://www.google.com/jsapi'></script>	
+
+	</head>
+	<body>
+		<h1>Internet Analytics: Traceroute App</h1>
+		<h3>Site analyzer</h3>
+		Enter url here... with http and resource <input id="url" type="text" name="url" />
+  		<input type="submit" value="Submit" onclick="javascript:runfinder()"/> or try the new bulk API <a href="/bulk.html">here</a><br />
+  		<span id="loading" style="display:none">LOADING</span><br />
+  		<span id="finderresult"></span><br />
+		<div id="datatable"></div><br />
+		
+		
+		
+		<!-- Here the Javascript -->
+		<script type="text/javascript">
+		google.load('visualization', '1', {packages:['table']});
+
+		function showresult(result){
+			console.log(result);
+			if(result.error){
+				alert(result.error);
+			} else {
+				$("#finderresult")[0].innerHTML = "Basecdn : " + result.basecdn + " ; Asset: " + result.assetcdn;
+				
+				//populate table
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'hostname');
+				data.addColumn('string', 'CDN');
+				data.addColumn('number', 'count');
+				data.addColumn('number', 'bytes');
+				data.addColumn('boolean', 'isbase');
+				data.addRows(result.resource.length);
+				for(i=0;i<result.resource.length;i++){
+					data.setCell(i, 0, result.resource[i].hostname);
+					data.setCell(i, 1, result.resource[i].cdn);
+					data.setCell(i, 2, result.resource[i].count);
+					data.setCell(i, 3, result.resource[i].bytes);
+					data.setCell(i, 4, result.resource[i].isbase);
+				}
+				var table = new google.visualization.Table(document.getElementById('datatable'));
+				table.draw(data, {showRowNumber: true});
+				
+			}
+			$("#loading").hide();
+		}
+
+
+		function runfinder(){
+			var url = $("#url")[0].value;
+			$("#loading").show();
+			$.ajax({
+				type: "POST",
+				//the url 
+				url: '/cdnfinder',
+				dataType: 'json',
+				async: true,
+				//json object to sent to the authentication url
+				data: { "url": url},
+				success: showresult
+			})
+
+			//$.getJSON("/", { "url": url}, function(data){ console.log(data);  })
+		}
+
+
+
+		</script>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+		
+	</body>
+</html>

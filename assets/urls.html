@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>New CDNfinder urls upload</title>
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css" />
+	</head>
+	<body>
+		<h1>Internet Analytics: Traceroute App</h1>
+		<h3>Upload urls list per region</h3>
+		<form action="/urlsUpload" method="post" enctype="multipart/form-data">
+			Upload a file with one domain per line. </br>
+			<input type="file" name="file" /> </br>
+			<input id="countryCode" type="text" name="countryCode" /> Country-code (UK: United Kingdom, US: United States, FR: France, DE: Germany, ES: Spain...)</br>
+			<input id="sessionId" type="text" name="sessionId" /> Session Id</br>
+			<input type="submit" value="Submit" />
+		<form>	
+		
+		
+		
+		<!-- Here the Javascript -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+	</body>
+</html>

@@ -9,7 +9,12 @@ var formidable = require('formidable'),
     http = require('http'),
     util = require('util');
 
+//Path is required to navigate throw directories	
+var path = require('path');	
+	
 var app = express(); 
+//This line is to access the directory of the assets
+app.use(express.static(path.join(__dirname, 'assets')));
 
 //app.use(express.bodyParser()); 
 //bodyParser will be removed by the following 2 lines
@@ -17,7 +22,20 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 
-app.post('/', function(req, res){
+app.get('/', function(req, res){
+  console.log(new Date(), req.connection.remoteAddress)
+  fs.readFile(__dirname + '/assets/index.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
+    res.writeHead(200);
+    res.end(data);
+  });
+});
+
+app.post('/cdnfinder', function(req, res){
   console.log(new Date(), req.connection.remoteAddress)
   console.log(new Date(), req.body.url)
   completecdnfinder(req.body.url, function(err, results){
@@ -39,18 +57,7 @@ app.post('/hostname/', function(req, res){
 });
 
 
-app.get('/', function(req, res){
-  console.log(new Date(), req.connection.remoteAddress)
-  fs.readFile(__dirname + '/lib/cdnfinder.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading cdnfinder.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-});
+
 
 
 var url = require("url");
@@ -148,18 +155,6 @@ app.get('/bulk', function(req, res){
 });
 
 
-app.get('/bulk.html', function(req, res){
-  console.log(new Date(), req.connection.remoteAddress)
-  fs.readFile(__dirname + '/lib/bulk.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading bulk.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-});
 
 app.post('/bulkUpload', function(req, res){
 	console.log(new Date(), req.connection.remoteAddress)
@@ -253,6 +248,86 @@ app.post('/bulk', function(req, res){
 });
 
 
+app.post('/urlsUpload', function(req, res){
+	console.log(new Date(), req.connection.remoteAddress)
+  
+  	req.connection.setTimeout(timeOut);
+	var form = new formidable.IncomingForm();
+	form.parse(req, function(err, fields, files) {
+		if (err) res.send({"status": "Something went wrong with your request"+err});
+		else {
+		
+			var countryCode = fields.countryCode;
+			var sessionId = '{ "sessionId":"'+fields.sessionId+'"}';
+			fs.readFile(files.file.path, 'utf8', function (err, data) {
+				
+				if(err) { 
+					console.log(err);
+					res.send({"upload":"fail"});
+				}else {
+					fs.writeFile(__dirname + '/tmp/latest_'+countryCode, data, function(err) {
+						if(err) {
+							console.log(err);
+							res.send({"upload":"fail"});
+						} else {
+							console.log("The file was saved!");
+						}
+					});
+					
+					fs.writeFile(__dirname + '/tmp/latest_sessionId', sessionId, function(err) {
+						if(err) {
+							console.log(err);
+							res.send({"upload":"fail"});
+						} else {
+							console.log("The file was saved!");
+						}
+					});
+				}				
+			});
+			res.send({"upload":"ok"});
+		
+		}
+    });
+});
+
+app.get('/getUrls', function(req, res){
+
+  var countryCode = url.parse(req.url, true).query["countryCode"];
+  console.log(new Date(), req.connection.remoteAddress);
+  
+  var directory = '';
+  if (path.existsSync(__dirname + '/tmp/latest_'+countryCode)) {
+	directory = '/tmp/latest_'+countryCode;
+  } else{
+	directory = '/tmp/latest_GLOBAL';
+  }
+  
+  fs.readFile(__dirname + directory,
+  function (err, data) {
+		if (err) {
+			res.writeHead(500);
+			return res.end('Error loading getUrls');
+		}
+		res.writeHead(200);
+		res.end(data);
+  });
+  
+});
+
+app.get('/getSessionId', function(req, res){
+
+  console.log(new Date(), req.connection.remoteAddress);
+  fs.readFile(__dirname + '/tmp/latest_sessionId',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading getUrls');
+    }
+    res.writeHead(200);
+    res.end(data);
+  });
+});
+
 
 var timeOut = 1800000; //30 min
 var parallelProc = 5; 
@@ -307,6 +382,8 @@ app.get('/test', function(req, res){
     });	
 
 });
+
+
 
 
 var top10 = ["http://google.com"
